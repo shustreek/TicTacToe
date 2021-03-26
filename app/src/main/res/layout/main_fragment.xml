@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.MainFragment"
+    tools:ignore="ContentDescription">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="20dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="20dp" />
+
+    <ImageView
+        android:id="@+id/cross"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_cross"
+        app:layout_constraintEnd_toStartOf="@+id/direction"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/start"
+        app:layout_constraintTop_toTopOf="@id/top" />
+
+    <ImageView
+        android:id="@+id/direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow"
+        app:layout_constraintEnd_toStartOf="@+id/circle"
+        app:layout_constraintStart_toEndOf="@+id/cross"
+        app:layout_constraintTop_toTopOf="@id/top" />
+
+    <ImageView
+        android:id="@+id/circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_circle"
+        app:layout_constraintEnd_toEndOf="@id/end"
+        app:layout_constraintStart_toEndOf="@+id/direction"
+        app:layout_constraintTop_toTopOf="@id/top" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="circle,cross,direction" />
+
+    <com.shustreek.tictactoe.views.FieldView
+        android:id="@+id/field"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:columnCount="3"
+        app:layout_constraintBottom_toBottomOf="@id/bottom"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/end"
+        app:layout_constraintStart_toStartOf="@id/start"
+        app:layout_constraintTop_toTopOf="@id/barrier"
+        app:rowCount="3">
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_cross" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_circle" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_cross" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_cross" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_circle" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_cross" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_cross" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_circle" />
+
+        <ImageView
+            style="@style/CellStyle"
+            tools:src="@drawable/ic_cross" />
+
+    </com.shustreek.tictactoe.views.FieldView>
+</androidx.constraintlayout.widget.ConstraintLayout>
