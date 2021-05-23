@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.shustreek.tictactoe.R
 import com.shustreek.tictactoe.databinding.MainFragmentBinding
-import com.shustreek.tictactoe.utils.observe
 
 class MainFragment : Fragment() {
 
@@ -49,51 +49,38 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.field.run {
-            for (i in 0 until childCount) {
-                val row = i / 3
-                val column = i % 3
-                with(getChildAt(i)) {
-                    setTag(R.id.row_tag, row)
-                    setTag(R.id.column_tag, column)
-                    setOnClickListener {
-                        viewModel.onCellClick(
-                            it.getTag(R.id.row_tag) as Int,
-                            it.getTag(R.id.column_tag) as Int
-                        )
-                    }
-                }
-            }
+        binding.field.forEachIndexed { index, v ->
+            v.setOnClickListener { viewModel.onCellClick(index) }
         }
 
-        observe(viewModel.currentMove) {
+        viewModel.currentMove.observe(viewLifecycleOwner) {
             binding.direction.animate()
-                .rotation(if (it == Mark.Cross) 0f else 180f)
+                .rotation(if (it == CellState.Cross) 0f else 180f)
 //                .scaleY(if (it == Mark.Cross) 1f else -1f)
         }
 
-        observe(viewModel.marks) {
+        viewModel.states.observe(viewLifecycleOwner) {
             val (status, matrix) = it
-            binding.field.clearLine()
-            matrix.forEachIndexed { index, mark ->
+            matrix.forEachIndexed { index, state ->
                 with(binding.field.getChildAt(index) as ImageView) {
-                    setImageResource(mark.icon)
-                    isEnabled = mark.isClickable && status == GameStatus.Started
+                    setImageResource(state.icon)
+                    isEnabled = state.isClickable && status == GameStatus.Started
                 }
             }
         }
 
-        observe(viewModel.markByIndex) {
-            with(binding.field.getChildAt(it.first) as ImageView) {
-                isEnabled = it.second.isClickable
-                ResourcesCompat.getDrawable(resources, it.second.icon, null)?.let { drw ->
+        viewModel.cellStateByIndex.observe(viewLifecycleOwner) {
+            val (index, state) = it
+            with(binding.field.getChildAt(index) as ImageView) {
+                isEnabled = state.isClickable
+                ResourcesCompat.getDrawable(resources, state.icon, null)?.let { drw ->
                     setImageDrawable(drw)
                     (drw as? Animatable)?.start()
                 }
             }
         }
 
-        observe(viewModel.winState) { binding.field.drawWinLine(it) }
+        viewModel.winState.observe(viewLifecycleOwner) { binding.field.drawWinLine(it) }
 
     }
 

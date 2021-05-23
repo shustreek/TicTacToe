@@ -1,4 +1,4 @@
-package com.shustreek.otustodo.utils
+package com.shustreek.tictactoe.utils
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

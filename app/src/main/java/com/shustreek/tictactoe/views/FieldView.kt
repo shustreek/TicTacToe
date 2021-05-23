@@ -5,12 +5,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
+import androidx.core.view.doOnNextLayout
 import androidx.gridlayout.widget.GridLayout
 import com.shustreek.tictactoe.R
+import java.io.Serializable
 
 class FieldView @JvmOverloads constructor(
     context: Context,
@@ -54,17 +58,27 @@ class FieldView @JvmOverloads constructor(
         }
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        if (changed) {
-            widthF = (right - left).toFloat()
-            heightF = (bottom-top).toFloat()
+    override fun onSaveInstanceState(): Parcelable {
+        return bundleOf(
+            "base" to super.onSaveInstanceState(),
+            "state" to mWinLineState
+        )
+    }
 
-            cellWidth = width / 3f
-            cellHeight = height / 3f
-            //recalculate line
-            drawWinLine(mWinLineState)
-        }
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val bundle = state as Bundle
+        super.onRestoreInstanceState(bundle.getSerializable("base") as Parcelable?)
+        mWinLineState = bundle.getSerializable("state") as WinLineState
+        doOnNextLayout { drawWinLine(mWinLineState, false) }
+    }
+
+    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
+        super.onMeasure(widthSpec, heightSpec)
+        widthF = MeasureSpec.getSize(widthSpec).toFloat()
+        heightF = MeasureSpec.getSize(heightSpec).toFloat()
+
+        cellWidth = widthF / 3f
+        cellHeight = heightF / 3f
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
@@ -93,13 +107,7 @@ class FieldView @JvmOverloads constructor(
         }
     }
 
-    fun clearLine() {
-        winLineRect = null
-        mWinLineState = WinLineState.None
-        invalidate()
-    }
-
-    fun drawWinLine(winLineState: WinLineState) {
+    fun drawWinLine(winLineState: WinLineState, animated: Boolean = true) {
         mWinLineState = winLineState
         winLineRect = when (winLineState) {
             WinLineState.MainDiagonal ->
@@ -116,12 +124,12 @@ class FieldView @JvmOverloads constructor(
             }
             WinLineState.None -> null
         }
-        animator.start()
+        if (animated) animator.start() else animator.end()
     }
 
 }
 
-sealed class WinLineState {
+sealed class WinLineState : Serializable {
     data class Horizontal(val row: Int) : WinLineState()
     data class Vertical(val column: Int) : WinLineState()
     object MainDiagonal : WinLineState()
